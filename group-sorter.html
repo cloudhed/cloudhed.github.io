@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gruppsortare</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito+Sans:ital,opsz,wght@0,6..12,300..1000;1,6..12,300..1000&display=swap');
+
+  :root {
+    --bg: #f0ece4;
+    --card: #fffdf9;
+    --inne: #2d6a4f;
+    --inne-light: #d4edda;
+    --inne-accent: #52b788;
+    --ute: #c0592b;
+    --ute-light: #fce0d3;
+    --ute-accent: #e07a5f;
+    --accent: #264653;
+    --accent2: #2a9d8f;
+    --text: #2b2d42;
+    --text-mid: #555;
+    --text-light: #8d99ae;
+    --border: #ddd5c8;
+    --shadow: 0 1px 6px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --r: 12px;
+    --rs: 7px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .app { max-width: 540px; margin: 0 auto; }
+
+  h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.9rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .card-title {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--accent);
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: var(--rs);
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #1d3a45; }
+  .btn-success { background: var(--inne); color: #fff; }
+  .btn-success:hover { background: #235a40; }
+  .btn-danger { background: #c0392b; color: #fff; }
+  .btn-danger:hover { background: #a93226; }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-mid);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+  .btn-lg { padding: 14px 20px; font-size: 0.95rem; border-radius: var(--r); width: 100%; }
+  .btn-ghost {
+    background: none; border: none; color: var(--text-light);
+    padding: 4px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-ghost:hover { color: var(--accent); }
+
+  input[type="text"], input[type="number"], select {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--rs);
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.15s;
+    background: #fff;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input[type="number"] { width: 56px; text-align: center; }
+
+  .roster-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .roster-bar select { flex: 1; min-width: 100px; }
+  .roster-bar .actions { display: flex; gap: 4px; }
+
+  .tabs {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 14px;
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 3px;
+    box-shadow: var(--shadow);
+  }
+  .tab {
+    flex: 1;
+    padding: 9px 4px;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    color: var(--text-light);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(38,70,83,0.25);
+  }
+  .tab:hover:not(.active) { background: #eee; }
+
+  .add-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .add-row input { flex: 1; }
+
+  .kid-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    min-height: 32px;
+  }
+  .kid-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+    border: 1.5px solid transparent;
+  }
+  .kid-chip.active {
+    background: #e8f0e8;
+    border-color: var(--inne-accent);
+    color: var(--text);
+  }
+  .kid-chip.inactive {
+    background: #eee;
+    border-color: #ddd;
+    color: #aaa;
+    text-decoration: line-through;
+  }
+  .kid-chip .inne-badge {
+    background: var(--inne);
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 0 4px;
+    border-radius: 8px;
+    line-height: 1.5;
+    font-weight: 800;
+  }
+  .kid-chip .remove-kid {
+    display: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #ccc;
+    color: #fff;
+    font-size: 9px;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .kid-pool.edit-mode .kid-chip .remove-kid { display: flex; }
+  .kid-pool.edit-mode .kid-chip { cursor: default; }
+  .kid-chip .remove-kid:hover { background: #c0392b; }
+
+  .pool-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .active-count {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  .empty-msg {
+    color: var(--text-light);
+    font-size: 0.78rem;
+    font-style: italic;
+    padding: 6px 0;
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .setting-row label { flex-shrink: 0; }
+  .hint {
+    font-size: 0.73rem;
+    color: var(--text-light);
+    margin-top: -4px;
+    margin-bottom: 8px;
+  }
+  .cb-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .results-area { margin-top: 14px; }
+
+  .group-box {
+    border-radius: var(--r);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .group-box.inne { background: var(--inne-light); border: 2px solid var(--inne-accent); }
+  .group-box.ute { background: var(--ute-light); border: 2px solid var(--ute-accent); }
+  .group-box.rest { background: #fff3e0; border: 2px solid #ffb74d; }
+
+  .group-label {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .group-box.inne .group-label { color: var(--inne); }
+  .group-box.ute .group-label { color: var(--ute); }
+  .group-box.rest .group-label { color: #e65100; }
+
+  .group-names { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .name-tag {
+    padding: 4px 11px;
+    border-radius: 18px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: rgba(255,255,255,0.75);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    border: 1.5px solid transparent;
+  }
+  .name-tag:hover { transform: scale(1.05); }
+  .name-tag.locked {
+    border-color: #888;
+    position: relative;
+  }
+  .name-tag.locked::after {
+    content: '🔒';
+    font-size: 0.55rem;
+    position: absolute;
+    top: -5px;
+    right: -3px;
+  }
+  .name-tag.no-click { cursor: default; }
+  .name-tag.no-click:hover { transform: none; }
+
+  .result-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .history-list { max-height: 200px; overflow-y: auto; }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.8rem;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-name { font-weight: 700; }
+  .history-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .history-bar {
+    width: 50px; height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .history-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .history-count {
+    font-weight: 700;
+    font-size: 0.75rem;
+    min-width: 16px;
+    text-align: right;
+  }
+
+  .history-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .history-tab {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    background: #eee;
+    color: var(--text-light);
+    transition: all 0.15s;
+  }
+  .history-tab.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: var(--r);
+    padding: 24px 20px;
+    max-width: 340px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .modal h3 {
+    font-family: 'Baloo 2', cursive;
+    margin-bottom: 6px;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .modal p {
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .modal-btns { display: flex; gap: 8px; justify-content: center; }
+  .modal-btns .btn { min-width: 70px; }
+  .modal input[type="text"] { width: 100%; margin-bottom: 14px; }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  .akt-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+    min-height: 28px;
+  }
+  .akt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1.5px solid;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .akt-chip.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .akt-chip.unselected {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: var(--text-mid);
+  }
+  .akt-chip .akt-remove {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    font-size: 9px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .akt-chip .akt-remove:hover { background: #c0392b; }
+
+  .akt-setting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .akt-setting:last-child { border-bottom: none; }
+  .akt-setting .akt-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .akt-setting .akt-name { flex: 1; }
+
+  @media (max-width: 400px) {
+    body { padding: 8px; }
+    h1 { font-size: 1.55rem; }
+    .card { padding: 12px; }
+    .tab { font-size: 0.68rem; padding: 8px 3px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🎲 Gruppsortare</h1>
+  <p class="subtitle">Sortera barn i grupper – med minne &amp; kontroll</p>
+
+  <!-- Roster selector -->
+  <div class="roster-bar">
+    <select id="rosterSelect" onchange="switchRoster()"></select>
+    <div class="actions">
+      <button class="btn btn-sm btn-primary" onclick="showNewRosterModal()">+ Ny</button>
+      <button class="btn btn-sm btn-outline" onclick="showRenameRosterModal()">✏️</button>
+      <button class="btn btn-sm btn-outline" onclick="deleteRoster()" title="Ta bort">🗑️</button>
+    </div>
+  </div>
+
+  <!-- Names card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">👦 Barn i klassen</span>
+      <button class="btn-ghost" id="editToggle" onclick="toggleEditMode()">✏️ Redigera</button>
+    </div>
+    <div class="add-row">
+      <input type="text" id="nameInput" placeholder="Lägg till namn (komma-separera)" onkeydown="if(event.key==='Enter')addNames()">
+      <button class="btn btn-sm btn-primary" onclick="addNames()">Lägg till</button>
+    </div>
+    <div class="kid-pool" id="kidPool"></div>
+    <div class="pool-actions">
+      <button class="btn-ghost" onclick="setAllActive(true)">✅ Alla med</button>
+      <button class="btn-ghost" onclick="setAllActive(false)">⬜ Alla bort</button>
+      <span class="active-count" id="activeCount"></span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="inne-ute" onclick="switchTab('inne-ute', this)">🏠 Inne / Ute</button>
+    <button class="tab" data-tab="aktivitet" onclick="switchTab('aktivitet', this)">🎨 Aktivitet</button>
+    <button class="tab" data-tab="multi" onclick="switchTab('multi', this)">👥 Flera grupper</button>
+  </div>
+
+  <!-- ═══ Pane: Inne / Ute ═══ -->
+  <div class="pane active" id="pane-inne-ute">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Inställningar</div>
+      <div class="setting-row">
+        <label>Antal inne:</label>
+        <input type="number" id="inneCount" value="5" min="1">
+      </div>
+      <p class="hint">Resten hamnar i "ute" automatiskt</p>
+      <label class="cb-label">
+        <input type="checkbox" id="smartBalance" checked>
+        Smart balansering (de som varit inne minst får förtur)
+      </label>
+    </div>
+    <button class="btn btn-success btn-lg" onclick="sortInneUte()">🎲 Sortera inne / ute</button>
+    <div class="results-area" id="resultsInneUte"></div>
+  </div>
+
+  <!-- ═══ Pane: Aktivitet ═══ -->
+  <div class="pane" id="pane-aktivitet">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Aktiviteter</span>
+      </div>
+      <div class="add-row">
+        <input type="text" id="aktInput" placeholder="Ny aktivitet…" onkeydown="if(event.key==='Enter')addActivity()">
+        <button class="btn btn-sm btn-primary" onclick="addActivity()">Lägg till</button>
+      </div>
+      <div class="akt-list" id="aktList"></div>
+    </div>
+
+    <div class="card" id="aktSettingsCard" style="display:none">
+      <div class="card-title" style="margin-bottom:10px">Antal per aktivitet</div>
+      <div id="aktSettings"></div>
+      <p class="hint" style="margin-top:8px">Resterande barn hamnar i "Resten"</p>
+      <label class="cb-label" style="margin-top:4px">
+        <input type="checkbox" id="aktSmartBalance" checked>
+        Smart balansering per aktivitet
+      </label>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="sortAktivitet()" id="aktSortBtn" style="display:none">🎲 Sortera aktiviteter</button>
+    <div class="results-area" id="resultsAktivitet"></div>
+  </div>
+
+  <!-- ═══ Pane: Multi ═══ -->
+  <div class="pane" id="pane-multi">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Inställningar</div>
+      <div class="setting-row">
+        <label>Antal grupper:</label>
+        <input type="number" id="groupCount" value="2" min="2" max="20">
+      </div>
+      <div class="setting-row">
+        <label>Per grupp:</label>
+        <input type="number" id="perGroup" value="4" min="1">
+      </div>
+      <p class="hint">Resterande fördelas jämnt</p>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="sortMulti()">🎲 Sortera i grupper</button>
+    <div class="results-area" id="resultsMulti"></div>
+  </div>
+
+  <!-- History -->
+  <div class="card" style="margin-top:6px">
+    <div class="card-header">
+      <span class="card-title">📋 Historik</span>
+      <button class="btn-ghost" onclick="showModal('resetHistoryModal')">Nollställ</button>
+    </div>
+    <div class="history-tabs" id="historyTabs"></div>
+    <div class="history-list" id="historyList">
+      <p class="empty-msg">Ingen historik ännu.</p>
+    </div>
+  </div>
+
+  <button class="btn btn-danger btn-lg" style="margin-top:6px" onclick="showModal('resetAllModal')">🗑️ Nollställ allt</button>
+</div>
+
+<!-- ═══ Modals ═══ -->
+<div class="modal-overlay" id="resetAllModal">
+  <div class="modal">
+    <h3>Nollställ allt?</h3>
+    <p>Tar bort alla klasser, namn, aktiviteter och historik. Verkligen?</p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('resetAllModal')">Avbryt</button>
+      <button class="btn btn-danger" onclick="resetAll()">Ja, nollställ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="resetHistoryModal">
+  <div class="modal">
+    <h3>Nollställ historik?</h3>
+    <p>Nollställer alla räknare (inne + aktiviteter) för denna klass.</p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('resetHistoryModal')">Avbryt</button>
+      <button class="btn btn-danger" onclick="resetHistory()">Ja, nollställ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="newRosterModal">
+  <div class="modal">
+    <h3>Ny klass</h3>
+    <p>Ge klassen ett namn:</p>
+    <input type="text" id="newRosterName" placeholder="t.ex. 2B" onkeydown="if(event.key==='Enter')createRoster()">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('newRosterModal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="createRoster()">Skapa</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="renameRosterModal">
+  <div class="modal">
+    <h3>Byt namn</h3>
+    <p>Nytt namn för klassen:</p>
+    <input type="text" id="renameRosterInput" onkeydown="if(event.key==='Enter')renameRoster()">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('renameRosterModal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="renameRoster()">Spara</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteRosterModal">
+  <div class="modal">
+    <h3>Ta bort klass?</h3>
+    <p id="deleteRosterMsg"></p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('deleteRosterModal')">Avbryt</button>
+      <button class="btn btn-danger" onclick="confirmDeleteRoster()">Ja, ta bort</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'gruppsortare_v3';
+
+let state = loadState();
+let editMode = false;
+let currentSort = null;
+let currentAktSort = null;
+let historyView = 'inne';
+
+function defaultState() {
+  const id = uid();
+  return {
+    currentRoster: id,
+    rosters: {
+      [id]: { name: 'Klass 1', kids: [], history: {}, actHistory: {} }
+    },
+    activities: [],
+    selectedActivities: []
+  };
+}
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.rosters && Object.keys(s.rosters).length > 0) {
+        if (!s.activities) s.activities = [];
+        if (!s.selectedActivities) s.selectedActivities = [];
+        Object.values(s.rosters).forEach(r => {
+          if (!r.actHistory) r.actHistory = {};
+        });
+        return s;
+      }
+    }
+  } catch(e) {}
+  return defaultState();
+}
+
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function R() { return state.rosters[state.currentRoster]; }
+
+// ── Roster ──
+function renderRosterSelect() {
+  const sel = document.getElementById('rosterSelect');
+  sel.innerHTML = Object.entries(state.rosters)
+    .map(([id, r]) => `<option value="${id}" ${id === state.currentRoster ? 'selected' : ''}>${r.name}</option>`)
+    .join('');
+}
+
+function switchRoster() {
+  state.currentRoster = document.getElementById('rosterSelect').value;
+  currentSort = null;
+  currentAktSort = null;
+  save();
+  renderAll();
+}
+
+function showNewRosterModal() {
+  document.getElementById('newRosterName').value = '';
+  showModal('newRosterModal');
+  setTimeout(() => document.getElementById('newRosterName').focus(), 100);
+}
+
+function createRoster() {
+  const name = document.getElementById('newRosterName').value.trim();
+  if (!name) return;
+  const id = uid();
+  state.rosters[id] = { name, kids: [], history: {}, actHistory: {} };
+  state.currentRoster = id;
+  currentSort = null;
+  currentAktSort = null;
+  save();
+  hideModal('newRosterModal');
+  renderAll();
+}
+
+function showRenameRosterModal() {
+  document.getElementById('renameRosterInput').value = R().name;
+  showModal('renameRosterModal');
+  setTimeout(() => document.getElementById('renameRosterInput').focus(), 100);
+}
+
+function renameRoster() {
+  const name = document.getElementById('renameRosterInput').value.trim();
+  if (!name) return;
+  R().name = name;
+  save();
+  hideModal('renameRosterModal');
+  renderRosterSelect();
+}
+
+function deleteRoster() {
+  if (Object.keys(state.rosters).length <= 1) {
+    alert('Du måste ha minst en klass.');
+    return;
+  }
+  document.getElementById('deleteRosterMsg').textContent =
+    `Vill du ta bort "${R().name}" med alla namn och historik?`;
+  showModal('deleteRosterModal');
+}
+
+function confirmDeleteRoster() {
+  delete state.rosters[state.currentRoster];
+  state.currentRoster = Object.keys(state.rosters)[0];
+  currentSort = null;
+  currentAktSort = null;
+  save();
+  hideModal('deleteRosterModal');
+  renderAll();
+}
+
+// ── Kids ──
+function addNames() {
+  const input = document.getElementById('nameInput');
+  const raw = input.value.trim();
+  if (!raw) return;
+  const roster = R();
+  raw.split(/[,\n]+/).map(n => n.trim()).filter(n => n).forEach(n => {
+    const f = n.charAt(0).toUpperCase() + n.slice(1);
+    if (!roster.kids.some(k => k.name === f)) {
+      roster.kids.push({ name: f, active: true });
+      if (!(f in roster.history)) roster.history[f] = 0;
+    }
+  });
+  input.value = '';
+  input.focus();
+  save();
+  renderKids();
+}
+
+function removeKid(name) {
+  const roster = R();
+  roster.kids = roster.kids.filter(k => k.name !== name);
+  delete roster.history[name];
+  Object.values(roster.actHistory).forEach(h => delete h[name]);
+  save();
+  renderKids();
+}
+
+function toggleKidActive(name) {
+  if (editMode) return;
+  const kid = R().kids.find(k => k.name === name);
+  if (kid) { kid.active = !kid.active; save(); renderKids(); }
+}
+
+function setAllActive(val) {
+  R().kids.forEach(k => k.active = val);
+  save();
+  renderKids();
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('editToggle').textContent = editMode ? '✅ Klar' : '✏️ Redigera';
+  renderKids();
+}
+
+function renderKids() {
+  const pool = document.getElementById('kidPool');
+  const roster = R();
+  if (roster.kids.length === 0) {
+    pool.innerHTML = '<p class="empty-msg">Inga barn tillagda ännu.</p>';
+    pool.className = 'kid-pool';
+    document.getElementById('activeCount').textContent = '';
+    return;
+  }
+  pool.className = 'kid-pool' + (editMode ? ' edit-mode' : '');
+  pool.innerHTML = roster.kids.map(k => {
+    const count = roster.history[k.name] || 0;
+    const cls = k.active ? 'active' : 'inactive';
+    return `<span class="kid-chip ${cls}" onclick="toggleKidActive('${esc(k.name)}')">
+      ${count > 0 ? `<span class="inne-badge">${count}</span>` : ''}
+      ${esc(k.name)}
+      <button class="remove-kid" onclick="event.stopPropagation();removeKid('${esc(k.name)}')">&times;</button>
+    </span>`;
+  }).join('');
+  const activeN = roster.kids.filter(k => k.active).length;
+  document.getElementById('activeCount').textContent = `${activeN} av ${roster.kids.length} med idag`;
+  renderHistory();
+}
+
+function esc(s) { return s.replace(/'/g, "\\'").replace(/</g, '&lt;'); }
+
+// ── Activities ──
+const AKT_COLORS = ['#e91e63','#9c27b0','#3f51b5','#009688','#ff9800','#795548','#607d8b','#4caf50','#f44336','#00bcd4'];
+function getAktColor(i) { return AKT_COLORS[i % AKT_COLORS.length]; }
+
+function addActivity() {
+  const input = document.getElementById('aktInput');
+  const name = input.value.trim();
+  if (!name || state.activities.some(a => a.name === name)) return;
+  state.activities.push({ name, count: 4 });
+  state.selectedActivities.push(name);
+  input.value = '';
+  input.focus();
+  save();
+  renderActivities();
+}
+
+function removeActivity(name) {
+  state.activities = state.activities.filter(a => a.name !== name);
+  state.selectedActivities = state.selectedActivities.filter(n => n !== name);
+  Object.values(state.rosters).forEach(r => delete r.actHistory[name]);
+  save();
+  renderActivities();
+}
+
+function toggleActivitySelected(name) {
+  const idx = state.selectedActivities.indexOf(name);
+  if (idx >= 0) state.selectedActivities.splice(idx, 1);
+  else state.selectedActivities.push(name);
+  save();
+  renderActivities();
+}
+
+function updateAktCount(name, val) {
+  const akt = state.activities.find(a => a.name === name);
+  if (akt) { akt.count = Math.max(1, parseInt(val) || 1); save(); }
+}
+
+function renderActivities() {
+  const list = document.getElementById('aktList');
+  if (state.activities.length === 0) {
+    list.innerHTML = '<p class="empty-msg">Inga aktiviteter skapade ännu.</p>';
+    document.getElementById('aktSettingsCard').style.display = 'none';
+    document.getElementById('aktSortBtn').style.display = 'none';
+    renderHistory();
+    return;
+  }
+
+  list.innerHTML = state.activities.map((a, i) => {
+    const sel = state.selectedActivities.includes(a.name);
+    return `<span class="akt-chip ${sel ? 'selected' : 'unselected'}" style="${sel ? '' : `color:${getAktColor(i)};border-color:${getAktColor(i)}`}" onclick="toggleActivitySelected('${esc(a.name)}')">
+      ${esc(a.name)}
+      <button class="akt-remove" onclick="event.stopPropagation();removeActivity('${esc(a.name)}')">&times;</button>
+    </span>`;
+  }).join('');
+
+  const selected = state.activities.filter(a => state.selectedActivities.includes(a.name));
+  const settingsCard = document.getElementById('aktSettingsCard');
+  const sortBtn = document.getElementById('aktSortBtn');
+
+  if (selected.length > 0) {
+    settingsCard.style.display = '';
+    sortBtn.style.display = '';
+    document.getElementById('aktSettings').innerHTML = selected.map(a => {
+      const ci = state.activities.indexOf(a);
+      return `<div class="akt-setting">
+        <span class="akt-dot" style="background:${getAktColor(ci)}"></span>
+        <span class="akt-name">${esc(a.name)}</span>
+        <input type="number" class="number-input" value="${a.count}" min="1" style="width:50px;padding:5px;font-size:0.82rem"
+          onchange="updateAktCount('${esc(a.name)}', this.value)">
+      </div>`;
+    }).join('');
+  } else {
+    settingsCard.style.display = 'none';
+    sortBtn.style.display = 'none';
+  }
+  renderHistory();
+}
+
+// ── Shuffle & Smart Pick ──
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function smartPick(pool, count, historyMap) {
+  const sorted = [...pool];
+  sorted.sort((a, b) => {
+    const diff = (historyMap[a] || 0) - (historyMap[b] || 0);
+    return diff !== 0 ? diff : Math.random() - 0.5;
+  });
+  const take = Math.min(count, sorted.length);
+  if (take === 0) return { picked: [], rest: [...pool] };
+  const cutoff = historyMap[sorted[take - 1]] || 0;
+  const below = sorted.filter(n => (historyMap[n] || 0) < cutoff);
+  const atC = shuffle(sorted.filter(n => (historyMap[n] || 0) === cutoff));
+  const above = sorted.filter(n => (historyMap[n] || 0) > cutoff);
+  const need = take - below.length;
+  const picked = [...below, ...atC.slice(0, need)];
+  const rest = [...atC.slice(need), ...above];
+  return { picked, rest };
+}
+
+// ── Inne / Ute ──
+function sortInneUte() {
+  const roster = R();
+  const activeNames = roster.kids.filter(k => k.active).map(k => k.name);
+  if (activeNames.length === 0) return;
+  const inneCount = Math.min(parseInt(document.getElementById('inneCount').value) || 1, activeNames.length);
+  const smart = document.getElementById('smartBalance').checked;
+
+  let inne, ute;
+  if (smart) {
+    const result = smartPick(activeNames, inneCount, roster.history);
+    inne = result.picked; ute = result.rest;
+  } else {
+    const pool = shuffle(activeNames);
+    inne = pool.slice(0, inneCount); ute = pool.slice(inneCount);
+  }
+  inne.forEach(n => roster.history[n] = (roster.history[n] || 0) + 1);
+  currentSort = { inne: [...inne], ute: [...ute], locked: new Set() };
+  save(); renderKids(); renderInneUteResults();
+}
+
+function renderInneUteResults() {
+  if (!currentSort) return;
+  const c = document.getElementById('resultsInneUte');
+  const tag = (name, group) => {
+    const lk = currentSort.locked.has(name);
+    return `<span class="name-tag ${lk ? 'locked' : ''}" onclick="moveKid('${esc(name)}','${group}')" title="Klicka för att flytta">${esc(name)}</span>`;
+  };
+  c.innerHTML = `
+    <div class="group-box inne">
+      <div class="group-label">🏠 Inne (${currentSort.inne.length})</div>
+      <div class="group-names">${currentSort.inne.map(n => tag(n,'inne')).join('')}</div>
+    </div>
+    <div class="group-box ute">
+      <div class="group-label">🌳 Ute (${currentSort.ute.length})</div>
+      <div class="group-names">${currentSort.ute.map(n => tag(n,'ute')).join('')}</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-sm btn-outline" onclick="rerollInne()">🎲 Fyll inne-platser</button>
+      <span style="font-size:0.72rem;color:var(--text-light)">Klicka namn för att flytta</span>
+    </div>`;
+}
+
+function moveKid(name, currentGroup) {
+  if (!currentSort) return;
+  const roster = R();
+  if (currentGroup === 'inne') {
+    currentSort.inne = currentSort.inne.filter(n => n !== name);
+    currentSort.ute.push(name);
+    roster.history[name] = Math.max(0, (roster.history[name] || 0) - 1);
+  } else {
+    currentSort.ute = currentSort.ute.filter(n => n !== name);
+    currentSort.inne.push(name);
+    roster.history[name] = (roster.history[name] || 0) + 1;
+  }
+  currentSort.locked.add(name);
+  save(); renderKids(); renderInneUteResults();
+}
+
+function rerollInne() {
+  if (!currentSort) return;
+  const roster = R();
+  const target = parseInt(document.getElementById('inneCount').value) || 1;
+  const spots = target - currentSort.inne.length;
+  if (spots <= 0) return;
+  const smart = document.getElementById('smartBalance').checked;
+  const candidates = currentSort.ute.filter(n => !currentSort.locked.has(n));
+  if (candidates.length === 0) return;
+  let picks;
+  if (smart) { picks = smartPick(candidates, spots, roster.history).picked; }
+  else { picks = shuffle(candidates).slice(0, spots); }
+  picks.forEach(n => {
+    currentSort.ute = currentSort.ute.filter(x => x !== n);
+    currentSort.inne.push(n);
+    roster.history[n] = (roster.history[n] || 0) + 1;
+  });
+  save(); renderKids(); renderInneUteResults();
+}
+
+// ── Aktivitet ──
+function sortAktivitet() {
+  const roster = R();
+  const activeNames = roster.kids.filter(k => k.active).map(k => k.name);
+  if (activeNames.length === 0) return;
+  const selected = state.activities.filter(a => state.selectedActivities.includes(a.name));
+  if (selected.length === 0) return;
+  const smart = document.getElementById('aktSmartBalance').checked;
+  let pool = shuffle([...activeNames]);
+  const groups = {};
+
+  selected.forEach(akt => {
+    groups[akt.name] = [];
+    if (!roster.actHistory[akt.name]) roster.actHistory[akt.name] = {};
+  });
+
+  selected.forEach(akt => {
+    const take = Math.min(akt.count, pool.length);
+    if (take === 0) return;
+    let picks;
+    if (smart) {
+      picks = smartPick(pool, take, roster.actHistory[akt.name] || {}).picked;
+    } else {
+      picks = pool.slice(0, take);
+    }
+    groups[akt.name] = picks;
+    picks.forEach(n => {
+      pool = pool.filter(x => x !== n);
+      if (!roster.actHistory[akt.name]) roster.actHistory[akt.name] = {};
+      roster.actHistory[akt.name][n] = (roster.actHistory[akt.name][n] || 0) + 1;
+    });
+  });
+
+  currentAktSort = { groups, rest: pool, selected: selected.map(a => a.name) };
+  save(); renderKids(); renderAktResults();
+}
+
+function renderAktResults() {
+  if (!currentAktSort) return;
+  const c = document.getElementById('resultsAktivitet');
+  let html = '';
+  currentAktSort.selected.forEach((aktName, i) => {
+    const ci = state.activities.findIndex(a => a.name === aktName);
+    const color = getAktColor(ci >= 0 ? ci : i);
+    const names = currentAktSort.groups[aktName] || [];
+    html += `<div class="group-box" style="background:${hexToLight(color)};border:2px solid ${color}">
+      <div class="group-label" style="color:${color}">${esc(aktName)} (${names.length})</div>
+      <div class="group-names">${names.map(n => `<span class="name-tag no-click">${esc(n)}</span>`).join('')}</div>
+    </div>`;
+  });
+  if (currentAktSort.rest.length > 0) {
+    html += `<div class="group-box rest">
+      <div class="group-label">📦 Resten (${currentAktSort.rest.length})</div>
+      <div class="group-names">${currentAktSort.rest.map(n => `<span class="name-tag no-click">${esc(n)}</span>`).join('')}</div>
+    </div>`;
+  }
+  c.innerHTML = html;
+}
+
+function hexToLight(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},0.1)`;
+}
+
+// ── Multi group ──
+function sortMulti() {
+  const roster = R();
+  const activeNames = roster.kids.filter(k => k.active).map(k => k.name);
+  if (activeNames.length === 0) return;
+  const groupCount = parseInt(document.getElementById('groupCount').value) || 2;
+  const perGroup = parseInt(document.getElementById('perGroup').value) || 4;
+  const pool = shuffle(activeNames);
+  const groups = Array.from({ length: groupCount }, () => []);
+  pool.forEach((name, i) => {
+    const target = Math.floor(i / perGroup);
+    if (target < groupCount) groups[target].push(name);
+    else {
+      const smallest = groups.reduce((m, g, idx) => g.length < groups[m].length ? idx : m, 0);
+      groups[smallest].push(name);
+    }
+  });
+  const bgs = ['#dcedc8','#bbdefb','#ffe0b2','#f8bbd0','#e1bee7','#b2dfdb','#fff9c4','#c5cae9'];
+  const bds = ['#7cb342','#42a5f5','#ffa726','#ec407a','#ab47bc','#26a69a','#ffca28','#5c6bc0'];
+  document.getElementById('resultsMulti').innerHTML = groups.map((g, i) => `
+    <div class="group-box" style="background:${bgs[i%bgs.length]};border:2px solid ${bds[i%bds.length]}">
+      <div class="group-label" style="color:${bds[i%bds.length]}">Grupp ${i+1} (${g.length})</div>
+      <div class="group-names">${g.map(n => `<span class="name-tag no-click">${esc(n)}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+// ── History ──
+function switchHistoryView(view) { historyView = view; renderHistory(); }
+
+function renderHistory() {
+  const roster = R();
+  const tabsC = document.getElementById('historyTabs');
+  const c = document.getElementById('historyList');
+  const aktNames = state.activities.map(a => a.name);
+  let tabs = ['inne', ...aktNames];
+
+  if (aktNames.length > 0) {
+    tabsC.innerHTML = tabs.map(t => {
+      const label = t === 'inne' ? '🏠 Inne' : t;
+      return `<button class="history-tab ${historyView === t ? 'active' : ''}" onclick="switchHistoryView('${esc(t)}')">${esc(label)}</button>`;
+    }).join('');
+  } else {
+    tabsC.innerHTML = '';
+  }
+
+  if (historyView !== 'inne' && !aktNames.includes(historyView)) historyView = 'inne';
+
+  let entries, color = 'var(--inne-accent)', countColor = 'var(--inne)';
+  if (historyView === 'inne') {
+    entries = Object.entries(roster.history).filter(([n]) => roster.kids.some(k => k.name === n)).sort((a,b) => b[1]-a[1]);
+  } else {
+    const hist = roster.actHistory[historyView] || {};
+    entries = Object.entries(hist).filter(([n]) => roster.kids.some(k => k.name === n)).sort((a,b) => b[1]-a[1]);
+    const ci = state.activities.findIndex(a => a.name === historyView);
+    color = getAktColor(ci >= 0 ? ci : 0);
+    countColor = color;
+  }
+
+  entries = (entries || []).filter(e => e[1] > 0);
+  if (entries.length === 0) { c.innerHTML = '<p class="empty-msg">Ingen historik ännu.</p>'; return; }
+  const max = Math.max(...entries.map(e => e[1]), 1);
+  c.innerHTML = entries.map(([name, count]) => `
+    <div class="history-item">
+      <span class="history-name">${esc(name)}</span>
+      <div class="history-bar-wrap">
+        <div class="history-bar"><div class="history-bar-fill" style="width:${(count/max)*100}%;background:${color}"></div></div>
+        <span class="history-count" style="color:${countColor}">${count}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function resetHistory() {
+  const roster = R();
+  Object.keys(roster.history).forEach(k => roster.history[k] = 0);
+  Object.keys(roster.actHistory).forEach(akt => {
+    Object.keys(roster.actHistory[akt]).forEach(k => roster.actHistory[akt][k] = 0);
+  });
+  save(); renderKids(); renderHistory(); hideModal('resetHistoryModal');
+}
+
+// ── Reset All ──
+function resetAll() {
+  state = defaultState();
+  currentSort = null; currentAktSort = null;
+  editMode = false; historyView = 'inne';
+  document.getElementById('editToggle').textContent = '✏️ Redigera';
+  save(); hideModal('resetAllModal'); renderAll();
+}
+
+// ── Tabs ──
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-' + id).classList.add('active');
+}
+
+// ── Modals ──
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function hideModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('show'); });
+});
+
+// ── Render All ──
+function renderAll() {
+  renderRosterSelect(); renderKids(); renderActivities(); renderHistory();
+  document.getElementById('resultsInneUte').innerHTML = '';
+  document.getElementById('resultsAktivitet').innerHTML = '';
+  document.getElementById('resultsMulti').innerHTML = '';
+  if (currentSort) renderInneUteResults();
+  if (currentAktSort) renderAktResults();
+}
+
+renderAll();
+</script>
+</body>
+</html>
