@@ -224,8 +224,28 @@
     line-height: 1;
   }
   .kid-pool.edit-mode .kid-chip .remove-kid { display: flex; }
-  .kid-pool.edit-mode .kid-chip { cursor: default; }
+  .kid-pool.edit-mode .kid-chip { cursor: pointer; }
   .kid-chip .remove-kid:hover { background: #c0392b; }
+
+  .count-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .count-row:last-child { border-bottom: none; }
+  .count-row label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+  }
+  .count-row .akt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .count-row input { width: 64px; }
 
   .pool-actions {
     display: flex;
@@ -530,6 +550,7 @@
       <button class="btn-ghost" onclick="setAllActive(false)">⬜ Alla bort</button>
       <span class="active-count" id="activeCount"></span>
     </div>
+    <p class="hint" id="editHint" style="display:none;margin-top:8px">Tips: klicka på ett namn för att redigera räknare manuellt.</p>
   </div>
 
   <!-- Tabs -->
@@ -674,6 +695,18 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="editCountsModal">
+  <div class="modal">
+    <h3>Redigera räknare</h3>
+    <p style="margin-bottom:10px"><strong id="editCountsName"></strong></p>
+    <div id="editCountsBody" style="margin-bottom:14px"></div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="hideModal('editCountsModal')">Avbryt</button>
+      <button class="btn btn-primary" onclick="saveEditCounts()">Spara</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const STORAGE_KEY = 'gruppsortare_v3';
 
@@ -682,6 +715,7 @@ let editMode = false;
 let currentSort = null;
 let currentAktSort = null;
 let historyView = 'inne';
+let editCountsTarget = null;
 
 function defaultState() {
   const id = uid();
@@ -817,9 +851,48 @@ function removeKid(name) {
 }
 
 function toggleKidActive(name) {
-  if (editMode) return;
+  if (editMode) { showEditCountsModal(name); return; }
   const kid = R().kids.find(k => k.name === name);
   if (kid) { kid.active = !kid.active; save(); renderKids(); }
+}
+
+function showEditCountsModal(name) {
+  const roster = R();
+  if (!roster.kids.some(k => k.name === name)) return;
+  editCountsTarget = name;
+  document.getElementById('editCountsName').textContent = name;
+  let html = `<div class="count-row">
+    <label>🏠 Inne</label>
+    <input type="number" id="editInneCount" value="${roster.history[name] || 0}" min="0">
+  </div>`;
+  state.activities.forEach((a, i) => {
+    const c = (roster.actHistory[a.name] && roster.actHistory[a.name][name]) || 0;
+    html += `<div class="count-row">
+      <label><span class="akt-dot" style="background:${getAktColor(i)}"></span>${esc(a.name)}</label>
+      <input type="number" data-akt="${esc(a.name)}" class="edit-akt-count" value="${c}" min="0">
+    </div>`;
+  });
+  document.getElementById('editCountsBody').innerHTML = html;
+  showModal('editCountsModal');
+}
+
+function saveEditCounts() {
+  const name = editCountsTarget;
+  if (!name) { hideModal('editCountsModal'); return; }
+  const roster = R();
+  const inneVal = Math.max(0, parseInt(document.getElementById('editInneCount').value) || 0);
+  roster.history[name] = inneVal;
+  document.querySelectorAll('#editCountsBody .edit-akt-count').forEach(inp => {
+    const akt = inp.dataset.akt;
+    const v = Math.max(0, parseInt(inp.value) || 0);
+    if (!roster.actHistory[akt]) roster.actHistory[akt] = {};
+    roster.actHistory[akt][name] = v;
+  });
+  editCountsTarget = null;
+  save();
+  hideModal('editCountsModal');
+  renderKids();
+  renderHistory();
 }
 
 function setAllActive(val) {
@@ -831,6 +904,7 @@ function setAllActive(val) {
 function toggleEditMode() {
   editMode = !editMode;
   document.getElementById('editToggle').textContent = editMode ? '✅ Klar' : '✏️ Redigera';
+  document.getElementById('editHint').style.display = editMode ? 'block' : 'none';
   renderKids();
 }
 
