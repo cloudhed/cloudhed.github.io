@@ -1,0 +1,24 @@
+# Runs the simulation test suite on every pull request and on main.
+#
+# Everything in shared/ is a pure function with no DOM and no renderer
+# dependency, which is what makes this possible without a browser or a build
+# step. The netcode acceptance test drives a real Room against a real Predictor
+# over a simulated lossy link, so a regression in prediction or reconciliation
+# fails here rather than in someone's match.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Simulation, protocol, room and netcode tests
+        run: node --test "tests/*.test.js"
