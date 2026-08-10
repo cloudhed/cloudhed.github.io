@@ -2,6 +2,10 @@ name = "arena-server"
 main = "src/worker.js"
 compatibility_date = "2025-06-01"
 
+# Publish to <name>.<your-subdomain>.workers.dev. Requires picking a workers.dev
+# subdomain once, in the Cloudflare dashboard under Workers & Pages.
+workers_dev = true
+
 # Deploy with:  npx wrangler deploy   (from this directory)
 # Local dev prefers the dependency-free Node adapter instead:
 #   node server/src/adapters/node.js
