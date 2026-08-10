@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arena CTF - M0 netcode testbed</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%23141021'/><circle cx='6' cy='8' r='3' fill='%23ff3d8b'/><circle cx='11' cy='8' r='2' fill='%238bff3d'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="view"></canvas>
+
+<div id="status"></div>
+
+<div class="panel panel-left">
+  <h1>ARENA <span>M0</span></h1>
+  <div class="row">
+    <input id="name" type="text" placeholder="name" maxlength="20" value="player">
+  </div>
+  <div class="row">
+    <input id="code" type="text" placeholder="CODE" maxlength="4" autocomplete="off"
+           spellcheck="false">
+    <button id="joinBtn">Join</button>
+  </div>
+  <div class="row">
+    <button id="createBtn" class="wide">Create room</button>
+  </div>
+  <p class="hint">
+    Click the view to capture the mouse. <b>WASD</b> move, <b>Space</b> jump
+    (hold to keep hopping), <b>Esc</b> release.
+  </p>
+  <p class="hint">
+    Open a second tab with the same code to test against yourself.
+  </p>
+</div>
+
+<div class="panel panel-right">
+  <h2>Network simulation</h2>
+  <p class="hint">
+    Applied to both directions. Prediction and interpolation only fail under bad
+    conditions &mdash; testing on localhost proves nothing.
+  </p>
+
+  <label>Round trip <output id="lagOut">0</output> ms
+    <input id="lag" type="range" min="0" max="500" step="10" value="0">
+  </label>
+  <label>Jitter <output id="jitterOut">0</output> ms
+    <input id="jitter" type="range" min="0" max="150" step="5" value="0">
+  </label>
+  <label>Loss <output id="lossOut">0</output> %
+    <input id="loss" type="range" min="0" max="30" step="1" value="0">
+  </label>
+
+  <label class="inline">Transport
+    <select id="mode">
+      <option value="tcp">tcp (websocket, real)</option>
+      <option value="udp">udp (datagrams, future)</option>
+    </select>
+  </label>
+
+  <label class="inline check">
+    <input id="markers" type="checkbox" checked> Show prediction markers
+  </label>
+
+  <p class="hint legend">
+    <span class="k dashed"></span> raw prediction &nbsp;
+    <span class="k hollow"></span> last server-confirmed
+  </p>
+
+  <div id="target">
+    Target: at <b>150 ms / 5% loss</b> your own movement has no perceptible
+    delay and remote players move smoothly.
+  </div>
+</div>
+
+<div class="panel panel-hud">
+  <div class="badge">room <b id="roomBadge">----</b></div>
+  <div id="hud"></div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

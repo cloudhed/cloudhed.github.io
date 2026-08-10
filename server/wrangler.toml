@@ -1,0 +1,19 @@
+name = "arena-server"
+main = "src/worker.js"
+compatibility_date = "2025-06-01"
+
+# Deploy with:  npx wrangler deploy   (from this directory)
+# Local dev prefers the dependency-free Node adapter instead:
+#   node server/src/adapters/node.js
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "GameRoom"
+
+# SQLite-backed Durable Objects are the ones available on the Workers free plan.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GameRoom"]
+
+[observability]
+enabled = true

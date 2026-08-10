@@ -1,0 +1,210 @@
+/*
+ * M0 debug UI. The colour direction is already the one the game will keep:
+ * dark violet ground, hot pink and lime as the two team colours, chunky type.
+ */
+
+:root {
+  --bg: #141021;
+  --panel: rgba(28, 22, 48, 0.92);
+  --border: #3a2f60;
+  --text: #e8e4f5;
+  --muted: #9a90bf;
+  --pink: #ff3d8b;
+  --lime: #8bff3d;
+  --yellow: #ffdc50;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+#view {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+/* --- panels --------------------------------------------------------------- */
+
+.panel {
+  position: fixed;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  backdrop-filter: blur(6px);
+  width: 260px;
+}
+
+.panel-left { top: 16px; left: 16px; }
+.panel-right { top: 16px; right: 16px; }
+.panel-hud { bottom: 16px; left: 16px; width: 210px; }
+
+h1 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  color: var(--pink);
+}
+h1 span {
+  color: var(--lime);
+  font-size: 12px;
+  vertical-align: super;
+}
+
+h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lime);
+  margin-bottom: 8px;
+}
+
+.row { display: flex; gap: 6px; margin-bottom: 8px; }
+
+input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  background: #0e0b1a;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 7px 9px;
+  font: inherit;
+}
+#code {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+input[type="text"]:focus { outline: none; border-color: var(--pink); }
+
+button {
+  background: var(--pink);
+  color: #1a0d16;
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+button:hover { filter: brightness(1.12); }
+button.wide { width: 100%; }
+
+.hint {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.hint b { color: var(--text); }
+
+/* --- sliders -------------------------------------------------------------- */
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+label output { color: var(--yellow); font-weight: 700; }
+
+input[type="range"] {
+  width: 100%;
+  margin-top: 4px;
+  accent-color: var(--pink);
+}
+
+label.inline { display: flex; align-items: center; gap: 8px; }
+label.check { margin-top: 12px; }
+
+select {
+  flex: 1;
+  background: #0e0b1a;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 5px;
+  font: inherit;
+  font-size: 11px;
+}
+
+.legend { display: flex; align-items: center; gap: 6px; }
+.k {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.k.dashed { border: 1px dashed var(--yellow); }
+.k.hollow { border: 1px solid rgba(255, 255, 255, 0.5); }
+
+#target {
+  margin-top: 12px;
+  padding: 8px;
+  border-left: 3px solid var(--lime);
+  background: rgba(139, 255, 61, 0.07);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+#target b { color: var(--lime); }
+
+/* --- hud ------------------------------------------------------------------ */
+
+.badge {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.badge b {
+  color: var(--lime);
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.22em;
+  font-size: 14px;
+}
+
+#hud { font-family: ui-monospace, monospace; font-size: 11px; }
+#hud div {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 0;
+}
+#hud span { color: var(--muted); }
+#hud b { color: var(--text); font-weight: 600; }
+
+/* --- status --------------------------------------------------------------- */
+
+#status {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 22px;
+  font-weight: 600;
+  text-align: center;
+  max-width: 380px;
+  display: none;
+}
+
+body.playing #status { display: none; }
