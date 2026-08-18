@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cloudhed</title>
+<style>
+  :root {
+    --bg: #f0ece4;
+    --card: #fffdf9;
+    --accent: #264653;
+    --accent2: #2a9d8f;
+    --text: #2b2d42;
+    --text-light: #8d99ae;
+    --border: #ddd5c8;
+    --shadow: 0 1px 6px rgba(0,0,0,0.05);
+    --r: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px;
+    line-height: 1.6;
+  }
+  main { max-width: 540px; margin: 0 auto; }
+  h1 { font-size: 26px; color: var(--accent); margin-bottom: 4px; }
+  .sub { color: var(--text-light); margin-bottom: 24px; font-size: 14px; }
+  a.tool {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  a.tool:hover { border-color: var(--accent2); }
+  a.tool b { display: block; color: var(--accent); font-size: 16px; }
+  a.tool span { color: var(--text-light); font-size: 13px; }
+  .tag {
+    display: inline-block;
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>cloudhed</h1>
+  <p class="sub">an assortment of tools</p>
+
+  <a class="tool" href="group-sorter.html">
+    <b>Gruppsortare</b>
+    <span>Dela in barn i gruppper och h&aring;ll r&auml;kning p&aring; aktiviteter.</span>
+  </a>
+
+  <a class="tool" href="game/">
+    <b>Arena CTF <span class="tag">work in progress</span></b>
+    <span>A browser capture-the-flag arena shooter. Currently at M0: a netcode
+    testbed for client prediction and interpolation. Desktop only.</span>
+  </a>
+</main>
+</body>
+</html>
