@@ -3,6 +3,7 @@
 cloudheds assortment of tools
 
 - **[Gruppsortare](https://cloudhed.github.io/group-sorter.html)** — group sorting tool
+- **[NornanBINGO!](https://cloudhed.github.io/bingo.html)** — fullscreen board for placing bingo winners on their chosen prize
 - **[Arena CTF](https://cloudhed.github.io/game/)** — browser capture-the-flag arena shooter (in progress)
 
 ## Arena CTF
