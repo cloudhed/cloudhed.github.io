@@ -222,15 +222,68 @@
   }
   body.is-dragging .trash { display: flex; }
   .trash.over { background: var(--danger); color: #fff; border-style: solid; }
+
+  /* ---------- BINGO!-animation ---------- */
+  .btn-bingo {
+    font: 800 clamp(1rem, 2.6vh, 1.6rem) 'Baloo 2', cursive;
+    background: var(--skoj);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.4em 1.2em;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    cursor: pointer;
+  }
+  .btn-bingo:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .bingo-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(38, 70, 83, 0.88);
+    cursor: pointer;
+  }
+  .bingo-overlay.show { display: flex; }
+  .bingo-letters {
+    display: flex;
+    gap: 1.5vw;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: min(22vw, 46vh);
+    line-height: 1;
+  }
+  .bingo-letters span {
+    display: inline-block;
+    opacity: 0;
+    color: var(--c);
+    text-shadow: 0 0.04em 0 rgba(0,0,0,0.25);
+  }
+  .bingo-overlay.show .bingo-letters span {
+    /* --i = bokstavens nummer; varje bokstav startar lite efter den förra */
+    animation: bingo-pop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.4) forwards;
+    animation-delay: calc(var(--i) * 150ms);
+  }
+  @keyframes bingo-pop {
+    0%   { opacity: 0; transform: scale(0) rotate(-20deg); }
+    60%  { opacity: 1; transform: scale(1.35) rotate(6deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <h1>NornanBINGO! 🎉</h1>
-  <div class="tools">
-    <button type="button" id="btn-reset">Töm fälten</button>
-    <button type="button" id="btn-full">Helskärm</button>
+  <div class="header-right">
+    <button type="button" class="btn-bingo" id="btn-bingo">BINGO! 🎉</button>
+    <div class="tools">
+      <button type="button" id="btn-reset">Töm fälten</button>
+      <button type="button" id="btn-full">Helskärm</button>
+    </div>
   </div>
 </header>
 
@@ -259,6 +312,17 @@
   </div>
   <div class="tray-body"></div>
 </section>
+
+<div class="bingo-overlay" id="bingo-overlay" aria-hidden="true">
+  <div class="bingo-letters">
+    <span style="--i:0; --c:#e9a13b">B</span>
+    <span style="--i:1; --c:#2a9d8f">I</span>
+    <span style="--i:2; --c:#ff7b7b">N</span>
+    <span style="--i:3; --c:#b5577e">G</span>
+    <span style="--i:4; --c:#f4e04d">O</span>
+    <span style="--i:5; --c:#fff">!</span>
+  </div>
+</div>
 
 <div class="trash" id="trash">🗑️ Släpp här för att ta bort</div>
 
@@ -412,6 +476,24 @@
     if (document.fullscreenElement) document.exitFullscreen();
     else document.documentElement.requestFullscreen().catch(() => {});
   });
+
+  // ---------- BINGO!-animation ----------
+  const bingoOverlay = document.getElementById('bingo-overlay');
+  const BINGO_VISIBLE_MS = 4500;
+  let bingoTimer = null;
+
+  function hideBingo() {
+    clearTimeout(bingoTimer);
+    bingoOverlay.classList.remove('show');
+  }
+  function showBingo() {
+    hideBingo();
+    void bingoOverlay.offsetWidth; // startar om animationen om man trycker igen
+    bingoOverlay.classList.add('show');
+    bingoTimer = setTimeout(hideBingo, BINGO_VISIBLE_MS);
+  }
+  document.getElementById('btn-bingo').addEventListener('click', showBingo);
+  bingoOverlay.addEventListener('click', hideBingo);
 
   render();
 })();
